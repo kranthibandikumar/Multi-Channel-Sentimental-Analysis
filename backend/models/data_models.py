@@ -1,87 +1,34 @@
-from pydantic import BaseModel, Field, HttpUrl
-from typing import List, Dict, Optional, Union
+from pydantic import BaseModel, Field
 from enum import Enum
 from datetime import datetime
-
-class SentimentScore(str, Enum):
-    POSITIVE = "positive"
-    NEGATIVE = "negative"
-    NEUTRAL = "neutral"
-
-class SourceType(str, Enum):
-    SOCIAL_MEDIA = "social_media"
-    PRINT_MEDIA = "print_media"
-    CALL_RECORDS = "call_records"
-    EMAIL = "email"
-
-class SocialMediaPlatform(str, Enum):
-    TWITTER = "twitter"
-    FACEBOOK = "facebook"
-    INSTAGRAM = "instagram"
-    LINKEDIN = "linkedin"
+from typing import Dict, Any, Optional, List
 
 class DocumentType(str, Enum):
     PDF = "pdf"
     DOCX = "docx"
-    TXT = "txt"
     XLSX = "xlsx"
+    TEXT = "txt"
+
+class SentimentScore(BaseModel):
+    positive: float = Field(..., ge=0, le=1)
+    negative: float = Field(..., ge=0, le=1)
+    neutral: float = Field(..., ge=0, le=1)
 
 class PrintMediaDocument(BaseModel):
     document_type: DocumentType
     content: str
     file_name: str
-    upload_timestamp: datetime
-    page_count: Optional[int] = None
-    metadata: Dict = Field(default_factory=dict)
-
-class SocialMediaPost(BaseModel):
-    platform: SocialMediaPlatform
-    content: str
-    post_id: str
-    timestamp: datetime
-    author: str
-    metadata: Dict = Field(default_factory=dict)
-
-class CallRecord(BaseModel):
-    call_id: str
-    audio_url: Optional[HttpUrl] = None
-    transcript: str
-    duration: int  # in seconds
-    timestamp: datetime
-    metadata: Dict = Field(default_factory=dict)
-
-class Email(BaseModel):
-    email_id: str
-    subject: str
-    body: str
-    sender: str
-    timestamp: datetime
-    attachments: List[str] = Field(default_factory=list)
-    metadata: Dict = Field(default_factory=dict)
+    upload_timestamp: datetime = Field(default_factory=datetime.now)
+    page_count: int = Field(..., gt=0)
+    metadata: Dict[str, Any] = Field(default_factory=dict)
 
 class SentimentResult(BaseModel):
     text: str
-    sentiment: SentimentScore
-    confidence: float = Field(ge=0.0, le=1.0)
-    source_type: SourceType
-    timestamp: datetime
-    metadata: Dict = Field(default_factory=dict)
-
-class AnalysisRequest(BaseModel):
-    source_type: SourceType
-    content: Union[SocialMediaPost, PrintMediaDocument, CallRecord, Email]
-    additional_context: Optional[Dict] = None
+    score: SentimentScore
+    highlights: List[str]
 
 class AnalysisResponse(BaseModel):
-    request_id: str
-    source_type: SourceType
-    sentiment_results: List[SentimentResult]
-    analysis_timestamp: datetime
-    processing_time: float  # in seconds
-    metadata: Dict = Field(default_factory=dict)
-
-class ErrorResponse(BaseModel):
-    error_code: str
-    message: str
+    document_id: str
+    results: List[SentimentResult]
+    metadata: Dict[str, Any]
     timestamp: datetime
-    details: Optional[Dict] = None
