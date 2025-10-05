@@ -8,6 +8,7 @@ class DocumentType(str, Enum):
     DOCX = "docx"
     XLSX = "xlsx"
     TEXT = "txt"
+    AUDIO = "audio"
 
 class SentimentScore(BaseModel):
     positive: float = Field(..., ge=0, le=1)
@@ -22,6 +23,19 @@ class PrintMediaDocument(BaseModel):
     page_count: int = Field(..., gt=0)
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
+class AudioSegment(BaseModel):
+    start_time: float
+    end_time: float
+    text: str
+    sentiment: Optional[SentimentScore] = None
+
+class AudioAnalysisResult(BaseModel):
+    file_name: str
+    duration: float
+    segments: List[AudioSegment]
+    overall_sentiment: SentimentScore
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+
 class SentimentResult(BaseModel):
     text: str
     score: SentimentScore
@@ -32,3 +46,4 @@ class AnalysisResponse(BaseModel):
     results: List[SentimentResult]
     metadata: Dict[str, Any]
     timestamp: datetime
+    audio_analysis: Optional[AudioAnalysisResult] = None
