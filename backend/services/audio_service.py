@@ -9,10 +9,10 @@ from typing import List  # Add this import
 from backend.models.data_models import AudioAnalysisResult, AudioSegment, SentimentScore
 from backend.services.sentiment_analyzer import SentimentAnalyzer
 
-ffmpeg_dir = r"C:\Users\bk85936\Downloads\ffmpeg-8.0-full_build\ffmpeg-8.0-full_build\bin"
+ffmpeg_dir = r"PATH"
 os.environ["PATH"] = ffmpeg_dir + os.pathsep + os.environ.get("PATH", "")
 PydubAudioSegment.converter = os.path.join(ffmpeg_dir, "ffmpeg.exe")
-PydubAudioSegment.ffprobe = r"C:\Users\bk85936\Downloads\ffmpeg-8.0-full_build\ffmpeg-8.0-full_build\bin\ffprobe.exe"
+PydubAudioSegment.ffprobe = r"PATH"
 
 logger = logging.getLogger(__name__)
 
