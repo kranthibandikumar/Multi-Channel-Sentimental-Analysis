@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from backend.api.print_media_routes import router as print_media_router
+from backend.api.audio_routes import router as audio_router
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -21,6 +22,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(print_media_router)
+app.include_router(audio_router)
 
 # Root endpoint
 @app.get("/")

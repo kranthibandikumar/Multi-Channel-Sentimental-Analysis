@@ -7,15 +7,7 @@ from datetime import datetime
 import logging
 
 logger = logging.getLogger(__name__)
-
-# Download required NLTK data packages
-# punkt_tab is required for Python 3.13+, punkt for earlier versions
-try:
-    nltk.download('punkt_tab', quiet=True)
-    nltk.download('punkt', quiet=True)
-    logger.debug("NLTK data packages downloaded successfully")
-except Exception as e:
-    logger.warning(f"Error downloading NLTK data: {str(e)}")
+nltk.download('punkt')
 
 class SentimentAnalyzer:
     def __init__(self):
